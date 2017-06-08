@@ -1,5 +1,6 @@
 package it.polito.tdp.seriea.db;
 
+import java.util.HashMap;
 import java.util.List;
 
 import it.polito.tdp.seriea.model.Season;
@@ -13,7 +14,7 @@ public class TestSerieADAO {
 		List<Season> seasons = dao.listSeasons() ;
 		System.out.println(seasons);
 		
-		List<Team> teams = dao.listTeams() ;
+		List<Team> teams = dao.listTeams(new HashMap<>()) ;
 		System.out.println(teams);
 
 

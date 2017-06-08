@@ -3,7 +3,9 @@ package it.polito.tdp.seriea.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graphs;
@@ -16,14 +18,16 @@ public class Model {
 
 	private List<Team> teams; // tutte le squadre, di ogni anno
 	private List<Season> seasons;
+	private Map<String, Team> teamsMap;
 
 	private SimpleDirectedWeightedGraph<Team, DefaultWeightedEdge> graph;
 
 	public Model() {
 
 		SerieADAO dao = new SerieADAO();
+		this.teamsMap = new HashMap<>();
 
-		this.teams = dao.listTeams();
+		this.teams = dao.listTeams(teamsMap);
 		this.seasons = dao.listSeasons();
 
 	}
@@ -42,7 +46,7 @@ public class Model {
 		this.graph = new SimpleDirectedWeightedGraph<Team, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		SerieADAO dao = new SerieADAO();
 
-		List<Match> matches = dao.listMatches(season, teams);
+		List<Match> matches = dao.listMatches(season, teamsMap);
 
 		for (Match m : matches) {
 			graph.addVertex(m.getHomeTeam());

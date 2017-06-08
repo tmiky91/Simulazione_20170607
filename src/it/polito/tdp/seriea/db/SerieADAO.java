@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.tdp.seriea.model.Match;
 import it.polito.tdp.seriea.model.Season;
@@ -38,7 +39,7 @@ public class SerieADAO {
 		}
 	}
 
-	public List<Team> listTeams() {
+	public List<Team> listTeams(Map <String,Team> teamIdMap) {
 		String sql = "SELECT team FROM teams";
 
 		List<Team> result = new ArrayList<>();
@@ -51,7 +52,9 @@ public class SerieADAO {
 			ResultSet res = st.executeQuery();
 
 			while (res.next()) {
-				result.add(new Team(res.getString("team")));
+				Team t = new Team(res.getString("team")) ;
+				teamIdMap.put(t.getTeam(), t) ;
+				result.add(t);
 			}
 
 			conn.close();
@@ -63,7 +66,7 @@ public class SerieADAO {
 		}
 	}
 
-	public List<Match> listMatches(Season season, List<Team> teams) {
+	public List<Match> listMatches(Season season, Map<String, Team> teamIdMap) {
 		String sql = "select match_id, season, `Div`, Date, HomeTeam, AwayTeam, FTHG, FTAG, FTR "
 				+ "from matches where season=?";
 		
@@ -83,8 +86,8 @@ public class SerieADAO {
 						season,
 						res.getString("Div"),
 						res.getDate("Date").toLocalDate(),
-						teams.get(teams.indexOf(new Team(res.getString("HomeTeam")))),
-						teams.get(teams.indexOf(new Team(res.getString("AwayTeam")))),
+						teamIdMap.get(res.getString("HomeTeam")),
+						teamIdMap.get(res.getString("AwayTeam")),
 						res.getInt("FTHG"),
 						res.getInt("FTAG"),
 						res.getString("FTR")
