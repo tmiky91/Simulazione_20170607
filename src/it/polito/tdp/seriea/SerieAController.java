@@ -7,6 +7,7 @@ package it.polito.tdp.seriea;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.seriea.model.Model;
@@ -67,7 +68,11 @@ public class SerieAController {
 
     @FXML
     void handleDomino(ActionEvent event) {
-    	
+    	List<Team> domino = model.calcolaDomino() ;
+    	txtResult.appendText("Miglior DOMINO calcolato: lunghezza "+domino.size()+"\n");
+    	for(Team t:domino) {
+    		txtResult.appendText(t.getTeam()+"\n");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
