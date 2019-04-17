@@ -42,6 +42,13 @@ public class Match {
 		this.ftr = ftr;
 	}
 
+	public Match(Team homeTeam, Team awayTeam, String ftr) {
+		super();
+		this.homeTeam = homeTeam;
+		this.awayTeam = awayTeam;
+		this.ftr = ftr;
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -196,7 +203,18 @@ public class Match {
 		return true;
 	}
 	
-	
-	
-
+//	public int calcolaPunteggio(Team homeTeam, Team awayTeam) {
+//		int punti=0;
+//		if(ftr.compareTo("H")==0) {
+//			punti=homeTeam.getPunti()+3;
+//		}
+//		else if(ftr.compareTo("D")==0) {
+//			punti=homeTeam.getPunti()+1;
+//			punti=awayTeam.getPunti()+1;
+//		}
+//		else {
+//			punti=awayTeam.getPunti()+3;
+//		}
+//		return punti;
+//	}
 }

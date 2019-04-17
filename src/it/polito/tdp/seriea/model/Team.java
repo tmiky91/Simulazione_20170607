@@ -3,10 +3,18 @@ package it.polito.tdp.seriea.model;
 public class Team {
 	
 	private String team ;
+	private String risultato;
+	private int punti;
 
 	public Team(String team) {
 		super();
 		this.team = team;
+	}
+	
+	public Team(String team, int punti) {
+		super();
+		this.team = team;
+		this.punti = punti;
 	}
 
 	/**
@@ -61,8 +69,22 @@ public class Team {
 			return false;
 		return true;
 	}
-	
-	
-	
 
+	public String getRisultato() {
+		return risultato;
+	}
+
+	public void setRisultato(String risultato) {
+		this.risultato = risultato;
+	}
+
+	public int getPunti() {
+		return punti;
+	}
+
+	public void setPunti(int punti) {
+		this.punti = punti;
+	}
+	
+	
 }
