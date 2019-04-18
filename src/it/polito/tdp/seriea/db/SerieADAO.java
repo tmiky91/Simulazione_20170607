@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,17 +69,18 @@ public class SerieADAO {
 
 	public void popolaGrafo(SimpleDirectedWeightedGraph<Team, DefaultWeightedEdge> grafo, Season s) {
 		final String sql="select HomeTeam as casa, AwayTeam as trasferta, " + 
-				"case " + 
-				"when ftr = \"H\" then 1 " + 
-				"when ftr = \"A\" then -1 " + 
-				"else 0 " + 
-				"end as peso " + 
-				"from matches as m " + 
-				"where season = ?";
+						"case " + 
+						"when ftr = \"H\" then 1 " + 
+						"when ftr = \"A\" then -1 " + 
+						"else 0 " + 
+						"end as peso " + 
+						"from matches as m " + 
+						"where season = ?";
 		
 		Connection conn = DBConnect.getConnection() ;
 		
 		try {
+			Map<Team, Team> team = new HashMap<>();
 			PreparedStatement st = conn.prepareStatement(sql) ;
 			st.setInt(1, s.getSeason());
 			ResultSet res = st.executeQuery() ;
@@ -89,39 +91,57 @@ public class SerieADAO {
 				String squadraTrasferta = res.getString("trasferta");
 				double peso = res.getDouble("peso");
 				
-				int punteggio=0;
+				int punteggioCasa=0;
+				int punteggioTrasferta=0;
 				
 				Team teamCasa = new Team(squadraCasa);
 				Team teamTrasferta = new Team(squadraTrasferta);
+				//Se usassi direttamente il team appena creato, facendo ogni volta new, il programma sovrascrive l'oggetto
+				//e risetterebbe il punteggio a 0 quindi aggiungo i team ad una mappa in modo che richiamando i team dalla
+				//mappa quando creo il grafo sono sicuro di avere sempre il primo creato
+				
+				if(!team.containsKey(teamCasa)) {
+					team.put(teamCasa, teamCasa);
+				}
+				if(!team.containsKey(teamTrasferta)) {
+					team.put(teamTrasferta, teamTrasferta);
+				}
 				
 				if(peso==1) {
-					punteggio=3;
+					punteggioCasa=3;
+					punteggioTrasferta=0;
 				}
-				if(peso==0) {
-					punteggio=1;
+				else if(peso==0) {
+					punteggioCasa=1;
+					punteggioTrasferta=1;
 				}
 				else {
-					punteggio=0;
+					punteggioCasa=0;
+					punteggioTrasferta=3;
 				}
 				
 				if(!grafo.containsVertex(teamCasa)) {
-					grafo.addVertex(teamCasa);
+					grafo.addVertex(team.get(teamCasa));
 				}
 				if(!grafo.containsVertex(teamTrasferta)) {
-					grafo.addVertex(teamTrasferta);
+					grafo.addVertex(team.get(teamTrasferta));
 				}
 				if(!grafo.containsEdge(teamCasa, teamTrasferta)) {
-					DefaultWeightedEdge edge = grafo.addEdge(teamCasa, teamTrasferta);
+					DefaultWeightedEdge edge = grafo.addEdge(team.get(teamCasa), team.get(teamTrasferta));
 					grafo.setEdgeWeight(edge, peso);
-					teamCasa.setPunteggio(punteggio);
+					team.get(teamCasa).setPunteggio(punteggioCasa);
+					team.get(teamTrasferta).setPunteggio(punteggioTrasferta);
 				}
-				
+				else {
+					DefaultWeightedEdge edge= grafo.getEdge(team.get(teamCasa), team.get(teamTrasferta));
+					grafo.getEdgeSource(edge).setPunteggio(punteggioCasa);
+					grafo.getEdgeTarget(edge).setPunteggio(punteggioTrasferta);	
+				}
 			}
-			
 			conn.close();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();	
+			throw new RuntimeException("Errore Db");	
 		}
 		
 	}

@@ -44,7 +44,6 @@ public class SerieAController {
     	else {
     		showMessage("Seleziona una stagione");
     	}
-
     }
 
     @FXML
