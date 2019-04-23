@@ -1,13 +1,24 @@
 package it.polito.tdp.seriea.model;
 
-public class Team {
+public class Team implements Comparable<Team>{
 	
 	private String team ;
-
+	private int punteggio;
+	
 	public Team(String team) {
 		super();
 		this.team = team;
 	}
+
+	public int getPunteggio() {
+		return punteggio;
+	}
+
+	public void setPunteggio(int punteggio) {
+		this.punteggio += punteggio;
+	}
+
+	
 
 	/**
 	 * @return the team
@@ -60,6 +71,11 @@ public class Team {
 		} else if (!team.equals(other.team))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(Team t1) {
+		return t1.getPunteggio()-this.getPunteggio();
 	}
 	
 	
