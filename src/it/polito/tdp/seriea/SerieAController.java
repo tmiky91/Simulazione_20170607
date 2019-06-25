@@ -6,8 +6,12 @@ package it.polito.tdp.seriea;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.seriea.model.Model;
+import it.polito.tdp.seriea.model.Season;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 
@@ -20,7 +24,7 @@ public class SerieAController {
     private URL location;
 
     @FXML // fx:id="boxSeason"
-    private ChoiceBox<?> boxSeason; // Value injected by FXMLLoader
+    private ChoiceBox<Season> boxSeason; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxTeam"
     private ChoiceBox<?> boxTeam; // Value injected by FXMLLoader
@@ -28,8 +32,16 @@ public class SerieAController {
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
 
+	private Model model;
+
     @FXML
     void handleCarica(ActionEvent event) {
+    	Season s = boxSeason.getValue();
+    	if(s!=null) {
+    		txtResult.setText(model.calcolaClassifica(s));
+    	}else {
+    		showMessage("Errore: Selezionare una stagione dal menù a tendina");
+    	}
 
     }
 
@@ -44,4 +56,16 @@ public class SerieAController {
         assert boxTeam != null : "fx:id=\"boxTeam\" was not injected: check your FXML file 'SerieA.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'SerieA.fxml'.";
     }
+
+	public void setModel(Model model) {
+		this.model = model;
+		boxSeason.getItems().addAll(model.getAllSeasons());
+		
+	}
+	
+	private void showMessage(String message) {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setContentText(message);
+		alert.show();
+	}
 }
